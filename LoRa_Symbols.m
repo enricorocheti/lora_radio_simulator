@@ -6,18 +6,18 @@ close all;
 %    wi = x;
 %end
 
-Es = 0.1;
-SF = 6;
-size = 100;
+Es = 0.5;
+SF = 7;
+size = 50;
 symbols = randsrc(1,size,[0:1:(2^SF)-1]);
 
-sigma = 0.1;
-gauss_noise = sigma*randn(size,2^SF) + sqrt(-1)*sigma*randn(size,2^SF);
+sigma = 1/SF;
+gauss_noise = sigma*(randn(size,2^SF) + sqrt(-1)*randn(size,2^SF));
 
 % cada símbolo é composto por SF bits, sk = k
 % cada símbolo sk é composto por wk(nT) formas de onda
 
-% cálculo de wi para i = 0, 1..., 2^SF - 1
+% cálculo da base w(i,n) [wi*(nT)] para i = 0, 1..., 2^SF - 1
 i = 1;
 for k = 0:1:(2^SF-1)
     j = 1;
@@ -28,7 +28,7 @@ for k = 0:1:(2^SF-1)
     i = i + 1;
 end
 
-% cálculo de Wk para cada símbolo k, Wk é a forma de onda que corresponde ao símbolo sk
+% cálculo de W(k,n) [Wk(nT)] para cada símbolo k, Wk é a forma de onda que corresponde ao símbolo sk
 i = 1;
 for k = [symbols]
     j = 1;
@@ -41,7 +41,7 @@ for k = [symbols]
     i = i + 1;
 end
 
-% rk é o sinal recebido no demodulador
+% rk [rk(nT)] é o sinal recebido no demodulador
 rk = Wk + gauss_noise;
 
 symbol_error = 0;

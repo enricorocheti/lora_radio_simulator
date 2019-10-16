@@ -4,9 +4,9 @@ close all;
 
 sigma = 1;
 EsdB = [-25:0];
-size = 1e4;
+size = 1e3;
 
-for SF=[7:1:10]
+for SF = [7:1:10]
     k = [0:2^SF-1];
 
     W = zeros(2^SF);
@@ -27,6 +27,7 @@ for SF=[7:1:10]
             Tx = sqrt(Es/2^SF).*W(symbol,:);    
             noise = sigma/sqrt(length(Tx))*(randn(1,length(Tx))+sqrt(-1)*randn(1,length(Tx)));    
             %h = abs(1/sqrt(2)*(randn(1,2^SF)+sqrt(-1)*randn(1,2^SF)));
+            %h = [x] onde x é variável aleatória rayleigh
             Rx = Tx + noise;    
             %Rx = h.*Tx + noise;    
             [a,b] = max(abs(sqrt(Es/2^SF)*Rx*W'));

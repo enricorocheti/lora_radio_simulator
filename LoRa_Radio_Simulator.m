@@ -6,28 +6,27 @@ sigma = 1;
 EsdB = [-25:0];
 size = 1e3;
 
-for SF = [7:1:10]
-    k = [0:2^SF-1];
+for SF = 7:1:10
+    k = 0:2^SF-1;
 
     W = zeros(2^SF);
-    for n=0:2^SF-1
-        W(n+1,:) = exp(sqrt(-1).*2.*pi.*mod(k+n,2^SF).*n./2^SF);
+    for n = 0:2^SF-1
+        W(n+1,:) = exp(sqrt(-1).*2.*pi.*mod(k+n,2^SF).*n./2^SF); % bases ortonormais que caracterizam o espaço de sinais LoRa
     end
-
+    
+    %pbit = zeros(1,length(EsdB));
     prob_symbol_error = [];
     prob_bit_error = [];
-    %pbit = zeros(1,length(EsdB));
     Tx = [];
     Rx = [];
-    for Es=10.^(0.1.*EsdB)
+    for Es = 10.^(0.1.*EsdB)
         symbol_error = zeros(1,size);
         bit_error = zeros(1,size);
-        for i=1:size
-            symbol = randi(2^SF-1);
+        for i = 1:size
+            symbol = randi(2^SF-1); % símbolos tem distribuição uniforme     
             Tx = sqrt(Es/2^SF).*W(symbol,:);    
-            noise = sigma/sqrt(length(Tx))*(randn(1,length(Tx))+sqrt(-1)*randn(1,length(Tx)));    
-            %h = abs(1/sqrt(2)*(randn(1,2^SF)+sqrt(-1)*randn(1,2^SF)));
-            %h = [x] onde x é variável aleatória rayleigh
+            noise = sigma/sqrt(length(Tx))*(randn(1,length(Tx))+sqrt(-1)*randn(1,length(Tx)));  % ruído tem distribuição gaussiana
+            h = raylrnd(1);
             Rx = Tx + noise;    
             %Rx = h.*Tx + noise;    
             [a,b] = max(abs(sqrt(Es/2^SF)*Rx*W'));

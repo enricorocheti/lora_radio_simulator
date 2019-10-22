@@ -3,10 +3,12 @@ clear all;
 close all;
 
 sigma = 1;
-EsdB = [-25:0];
+No = 2*sigma^2;
+%EsdB = [-25:0];
+SNR_dB = [-25:0];
 size = 1e3;
 
-for SF = 7:1:10
+for SF = 7:1:9
     k = 0:2^SF-1;
 
     W = zeros(2^SF);
@@ -19,16 +21,17 @@ for SF = 7:1:10
     prob_bit_error = [];
     Tx = [];
     Rx = [];
-    for Es = 10.^(0.1.*EsdB)
+    %for Es = 10.^(0.1.*EsdB)
+    for Es = No * 10.^(0.1*SNR_dB)
         symbol_error = zeros(1,size);
         bit_error = zeros(1,size);
         for i = 1:size
             symbol = randi(2^SF-1); % símbolos tem distribuição uniforme     
             Tx = sqrt(Es/2^SF).*W(symbol,:);    
             noise = sigma/sqrt(length(Tx))*(randn(1,length(Tx))+sqrt(-1)*randn(1,length(Tx)));  % ruído tem distribuição gaussiana
-            h = raylrnd(1);
-            Rx = Tx + noise;    
-            %Rx = h.*Tx + noise;    
+            h = abs((1/sqrt(2))*(randn(1,length(Tx))+sqrt(-1)*randn(1,length(Tx)))); % canal Rayleigh
+            %Rx = Tx + noise;    
+            Rx = h.*Tx + noise;    
             [a,b] = max(abs(sqrt(Es/2^SF)*Rx*W'));
             symbol_error(i) = (b~=symbol);
             bit_error(i) = get_bit_error(symbol,b,SF);
@@ -37,21 +40,21 @@ for SF = 7:1:10
         prob_bit_error = [prob_bit_error sum(bit_error)/(size*SF)];
     end
     figure(1)
-    semilogy(EsdB,prob_symbol_error)
+    semilogy(SNR_dB,prob_symbol_error)
     hold on
     figure(2)
-    semilogy(EsdB,prob_bit_error)
+    semilogy(SNR_dB,prob_bit_error)
     hold on
 end
 
 figure(1)
 title('Probabilidade de Erro de Símbolo');
 ylabel('Psym');
-xlabel('Es [dB]');
+xlabel('SNR [dB]');
 legend('SF = 7','SF = 8','SF = 9','SF = 10');
 
 figure(2)
 title('Probabilidade de Erro de Bit');
 ylabel('Pbit');
-xlabel('Es [dB]');
+xlabel('SNR [dB]');
 legend('SF = 7','SF = 8','SF = 9','SF = 10');

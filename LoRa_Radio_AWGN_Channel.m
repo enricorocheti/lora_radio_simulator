@@ -8,7 +8,7 @@ No = 2*sigma^2;
 SNR_dB = [-25:0];
 size = 1e3;
 
-for SF = 7:1:9
+for SF = 7:1:10
     k = 0:2^SF-1;
 
     W = zeros(2^SF);
@@ -16,7 +16,6 @@ for SF = 7:1:9
         W(n+1,:) = exp(sqrt(-1).*2.*pi.*mod(k+n,2^SF).*n./2^SF); % bases ortonormais que caracterizam o espaço de sinais LoRa
     end
     
-    %pbit = zeros(1,length(EsdB));
     prob_symbol_error = [];
     prob_bit_error = [];
     Tx = [];
@@ -27,10 +26,9 @@ for SF = 7:1:9
         bit_error = zeros(1,size);
         for i = 1:size
             symbol = randi(2^SF-1); % símbolos tem distribuição uniforme     
-            Tx = sqrt(Es/2^SF).*W(symbol,:);    
-            noise = sigma/sqrt(length(Tx))*(randn(1,length(Tx))+sqrt(-1)*randn(1,length(Tx)));  % ruído tem distribuição gaussiana
-            h = abs((1/sqrt(2))*(randn(1,length(Tx))+sqrt(-1)*randn(1,length(Tx)))); % canal Rayleigh
-            %Rx = Tx + noise;    
+            Tx = sqrt(Es/2^SF).*W(symbol,:);
+            noise = (sigma/sqrt(length(Tx)))*(randn(1,length(Tx))+sqrt(-1)*randn(1,length(Tx)));  % ruído tem distribuição gaussiana
+            h = 0.5*(randn(1,1)+sqrt(-1)*randn(1,1)); % canal AWGN
             Rx = h.*Tx + noise;    
             [a,b] = max(abs(sqrt(Es/2^SF)*Rx*W'));
             symbol_error(i) = (b~=symbol);
@@ -48,13 +46,13 @@ for SF = 7:1:9
 end
 
 figure(1)
-title('Probabilidade de Erro de Símbolo');
+title('Probabilidade de Erro de Símbolo - Canal AWGN');
 ylabel('Psym');
 xlabel('SNR [dB]');
 legend('SF = 7','SF = 8','SF = 9','SF = 10');
 
 figure(2)
-title('Probabilidade de Erro de Bit');
+title('Probabilidade de Erro de Bit - Canal AWGN');
 ylabel('Pbit');
 xlabel('SNR [dB]');
 legend('SF = 7','SF = 8','SF = 9','SF = 10');

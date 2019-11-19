@@ -5,10 +5,10 @@ close all;
 sigma = 1;
 No = 2*sigma^2;
 %EsdB = [-25:0];
-SNR_dB = [-25:0];
-size = 1e3;
+SNR_dB = [-30:25];
+size = 1e4;
 
-for SF = 7:1:10
+for SF = 7:1:7
     k = 0:2^SF-1;
 
     W = zeros(2^SF);

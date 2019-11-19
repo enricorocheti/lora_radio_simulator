@@ -28,8 +28,8 @@ for SF = 7:1:10
             symbol = randi(2^SF-1); % símbolos tem distribuição uniforme     
             Tx = sqrt(Es/2^SF).*W(symbol,:);
             noise = (sigma/sqrt(length(Tx)))*(randn(1,length(Tx))+sqrt(-1)*randn(1,length(Tx)));  % ruído tem distribuição gaussiana
-            h = 0.5*(randn(1,1)+sqrt(-1)*randn(1,1)); % canal AWGN
-            Rx = h.*Tx + noise;    
+            h = 0.1*(randn(1,1)+sqrt(-1)*randn(1,1)); % canal AWGN
+            Rx = h*Tx + noise;    
             [a,b] = max(abs(sqrt(Es/2^SF)*Rx*W'));
             symbol_error(i) = (b~=symbol);
             bit_error(i) = get_bit_error(symbol,b,SF);

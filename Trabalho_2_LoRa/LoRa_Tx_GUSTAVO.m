@@ -1,9 +1,11 @@
 clc;
 clear all;
-SF=8;
+SF=10;
 Es=2^SF;
 Fs=8000;
 
+T = 1/1e2;
+Ts = T*2^SF;
 Ts=1; %Tempo de um símbolo apenas
 t=[0:1/Fs:Ts];
 
@@ -14,12 +16,19 @@ for k=0:2^SF-1
 end
 
 %% Tx
-indice=30;
-Tx=W(indice,:).*exp(sqrt(-1).*2.*pi.*t.*600);
-sound(real(Tx),Fs)
+Tx = [];
+for indice = [100]
+    Tx=[Tx W(indice,:).*exp(sqrt(-1).*2.*pi.*t.*600)];
+end
 
+%sound(real(Tx),Fs)
+audiowrite('gravacaoXX.wav',real(Tx),Fs);
 %% RX
-rx=hilbert(Tx).*exp(-sqrt(-1).*2.*pi.*t.*600);
+
+[Rx,Fs] = audioread('gravacaoXX.wav');
+Rx = reshape(Rx,1,[]);
+
+rx=hilbert(Rx).*exp(-sqrt(-1).*2.*pi.*t.*600);
 [a,b]=max(abs(rx*W'));
 %?ndice decodificado ?
 b

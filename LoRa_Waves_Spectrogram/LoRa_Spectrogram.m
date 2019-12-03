@@ -29,29 +29,28 @@ end
 
 figure(2)
 spectrogram(signal,kaiser(128,18),120,128,B,'onesided','yaxis');
+title('SF7, SF8, SF9 e SF10');
 
-NFFT = 128;
-f_vec = [-floor(NFFT/2) : ceil(NFFT/2)-1] * B/NFFT;
-figure(4)
-spectrogram(signal2,128,120,f_vec,B,'yaxis');
+% NFFT = 128;
+% f_vec = [-floor(NFFT/2) : ceil(NFFT/2)-1] * B/NFFT;
+% spectrogram(signal2,128,120,f_vec,B,'yaxis');
 
-%% Símbolos
+%% Símbolos com SF10
 
 SF = 10;
 Tsym = T.*2.^SF;
-t = 0:Tsym/Fsample:Tsym;
-t = t(1:end-1);
+t = 0:Tsym/Fsample:Tsym-(Tsym/Fsample);
     
 wk = [];
 for k = [250 600 900 400]
-    f_offset = k*B/(2*2^SF)
+    f_offset = k*B/(2*2^SF);
     Tsym_1 = t(round(length(t)-length(t)*k/2^SF));
     Tsym_2 = t(round(length(t)*k/2^SF));
     t1 = t(1:length(t)-length(t)*k/2^SF);
     t2 = t(1:length(t)*k/2^SF);
-    wk = [wk chirp(t1,2*f_offset,Tsym_1,B)];
-    wk = [wk chirp(t2,0,Tsym_2,2*f_offset)];
+    wk = [wk chirp(t1,2*f_offset,Tsym_1,B) chirp(t2,0,Tsym_2,2*f_offset)];
 end
 
 figure(3)
 spectrogram(wk,kaiser(128,18),120,128,B,'onesided','yaxis');
+title('Símbolos k = 250, 600, 900 e 400');
